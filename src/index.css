@@ -1,0 +1,68 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Custom accent color: useAccent hook is variable ko badalta hai */
+:root {
+  --accent: #2563eb;
+  --bg-light: #f8fafc;
+  --bg-dark: #020617;
+  --surface-light: #ffffff;
+  --surface-dark: #0f172a;
+  --raised-dark: #1e293b;
+}
+
+/* Tailwind ka poora "blue" palette ab --accent se bantaa hai,
+   is liye components mein bg-blue-600 wagaira badalne ki zaroorat nahi */
+@theme {
+  --color-blue-50: color-mix(in oklab, var(--accent) 8%, white);
+  --color-blue-100: color-mix(in oklab, var(--accent) 16%, white);
+  --color-blue-200: color-mix(in oklab, var(--accent) 30%, white);
+  --color-blue-400: color-mix(in oklab, var(--accent) 75%, white);
+  --color-blue-500: color-mix(in oklab, var(--accent) 90%, white);
+  --color-blue-600: var(--accent);
+  --color-blue-700: color-mix(in oklab, var(--accent) 82%, black);
+  --color-blue-900: color-mix(in oklab, var(--accent) 45%, black);
+  --color-blue-950: color-mix(in oklab, var(--accent) 28%, black);
+
+  /* Page background: light mode = slate-50, dark mode = slate-950 */
+  --color-slate-50: var(--bg-light);
+  --color-slate-950: var(--bg-dark);
+
+  /* Topbar, cards, inputs: dark mode = slate-900 / slate-800 */
+  --color-slate-900: var(--surface-dark);
+  --color-slate-800: var(--raised-dark);
+
+  /* Light mode ke topbar, cards, inputs (bg-white ki jagah bg-surface) */
+  --color-surface: var(--surface-light);
+}
+
+@media print {
+  @page {
+    margin: 12mm;
+  }
+
+  /* Print hamesha safed page pe kala text, dark mode mein bhi */
+  * {
+    background: transparent !important;
+    color: black !important;
+    box-shadow: none !important;
+  }
+
+  /* Toast ka fixed container print ke upar na aaye */
+  [data-rht-toaster],
+  div[style*="position: fixed"] {
+    display: none !important;
+  }
+
+  /* Buttons aur input boxes print mein nahi chahiye */
+  button,
+  input,
+  select,
+  textarea {
+    display: none !important;
+  }
+
+  tr {
+    break-inside: avoid;
+  }
+}
