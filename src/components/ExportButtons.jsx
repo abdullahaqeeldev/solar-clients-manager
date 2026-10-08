@@ -18,12 +18,12 @@ export default function ExportButtons({ clients }) {
   const handleShare = async () => {
     try {
       const shared = await shareFile(
-        buildPDFBlob(clients),
+        await buildPDFBlob(clients),
         "clients.pdf",
         "application/pdf"
       );
       if (!shared) {
-        downloadPDF(clients);
+        await downloadPDF(clients);
         toast("Share isn't supported on this device. The PDF was downloaded instead.");
       }
     } catch (err) {
@@ -41,9 +41,9 @@ export default function ExportButtons({ clients }) {
     }
   };
 
-  const handlePDF = () => {
+  const handlePDF = async () => {
     try {
-      downloadPDF(clients);
+      await downloadPDF(clients);
       toast.success("PDF downloaded");
     } catch {
       toast.error("Could not create the PDF file. Please try again.");

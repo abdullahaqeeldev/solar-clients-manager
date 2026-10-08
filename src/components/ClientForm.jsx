@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { X, Save } from "lucide-react";
+import { X, Save, LocateFixed, ExternalLink } from "lucide-react";
+import toast from "react-hot-toast";
 import FormField from "./FormField";
 import {
   emptyClient,
   getInputClass,
+  getMapUrl,
   validateClient,
 } from "../utils/clientUtils";
 
@@ -13,6 +15,7 @@ function ClientForm({ editingClient, onSave, onCancel }) {
       ? {
           name: editingClient.name,
           address: editingClient.address,
+          location: editingClient.location || "",
           solar: editingClient.solar,
           date: editingClient.date,
           licenseStart: editingClient.licenseStart || "",
@@ -31,6 +34,25 @@ function ClientForm({ editingClient, onSave, onCancel }) {
     setErrors((previous) => ({ ...previous, [name]: undefined }));
   };
 
+  // Browser se abhi ki location le kar Google Maps ka link bana do
+  const handleCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      toast.error("Location is not supported on this device.");
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => {
+        const link = `https://www.google.com/maps?q=${coords.latitude},${coords.longitude}`;
+        setFormData((previous) => ({ ...previous, location: link }));
+        toast.success("Current location added");
+      },
+      () => toast.error("Could not get location. Allow location access or paste a Google Maps link."),
+      { enableHighAccuracy: true, timeout: 15000 },
+    );
+  };
+
+  const mapUrl = getMapUrl(formData.location);
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -45,7 +67,7 @@ function ClientForm({ editingClient, onSave, onCancel }) {
   };
 
   return (
-    <div className="border-b border-slate-200 bg-slate-50 p-4 md:p-6 dark:border-slate-800 dark:bg-slate-950">
+    <div className="animate-slide-down border-b border-slate-200 bg-slate-50 p-4 md:p-6 dark:border-slate-800 dark:bg-slate-950">
       <div className="mb-5 flex items-center justify-between">
         <div>
           <h3 className="font-bold text-slate-900 dark:text-white">
@@ -91,6 +113,39 @@ function ClientForm({ editingClient, onSave, onCancel }) {
             placeholder="Enter address"
             className={getInputClass(errors.address)}
           />
+        </FormField>
+
+        <FormField label="Google Maps location" name="location">
+          <div className="flex gap-2">
+            <input
+              id="location"
+              name="location"
+              value={formData.location}
+              onChange={handleChange}
+              placeholder="Paste Google Maps link"
+              className={getInputClass(false)}
+            />
+            <button
+              type="button"
+              onClick={handleCurrentLocation}
+              title="Use my current location"
+              aria-label="Use my current location"
+              className="flex shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-surface px-3 text-slate-600 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+            >
+              <LocateFixed size={18} />
+            </button>
+          </div>
+          {mapUrl && (
+            <a
+              href={mapUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-1 inline-flex items-center gap-1 text-xs text-blue-600 hover:underline dark:text-blue-400"
+            >
+              <ExternalLink size={12} />
+              Check on Google Maps
+            </a>
+          )}
         </FormField>
 
         <FormField

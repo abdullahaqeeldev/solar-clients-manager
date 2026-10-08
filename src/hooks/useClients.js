@@ -113,6 +113,23 @@ export default function useClients() {
     );
   };
 
+  const updateExtension = (clientId, extensionId, data) => {
+    setClients((previous) =>
+      previous.map((client) =>
+        client.id === clientId
+          ? {
+              ...client,
+              extensions: (client.extensions || []).map((extension) =>
+                extension.id === extensionId
+                  ? { ...extension, ...data }
+                  : extension,
+              ),
+            }
+          : client,
+      ),
+    );
+  };
+
   const filteredClients = useMemo(() => {
     const query = search.toLowerCase().trim();
     if (!query) return clients;
@@ -141,6 +158,7 @@ export default function useClients() {
     deleteClient,
     addExtension,
     deleteExtension,
+    updateExtension,
     restoreClients,
   };
 }

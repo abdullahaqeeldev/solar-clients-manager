@@ -11,11 +11,12 @@ function ClientRow({
   onDelete,
   onAddExtension,
   onDeleteExtension,
+  onUpdateExtension,
   onPrint,
 }) {
   return (
     <Fragment>
-      <tr className="border-b border-slate-100 transition hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800/60">
+      <tr className="animate-fade-in border-b border-slate-100 transition hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800/60">
         <td className="px-4 py-4 align-top">
           <div className="flex min-w-0 items-center gap-3">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-50 text-sm font-bold text-blue-600 dark:bg-blue-950/50 dark:text-blue-400">
@@ -23,7 +24,7 @@ function ClientRow({
             </div>
 
             <div className="min-w-0">
-              <p className="truncate text-sm font-semibold text-slate-800 dark:text-slate-100">
+              <p className="truncate text-sm font-semibold text-slate-800 print:overflow-visible print:whitespace-normal print:break-words dark:text-slate-100">
                 {client.name}
               </p>
               <p className="truncate text-xs text-slate-400">ID #{client.id}</p>
@@ -31,7 +32,7 @@ function ClientRow({
           </div>
         </td>
 
-        <td className="truncate px-4 py-4 align-top text-sm text-slate-600 dark:text-slate-300">
+        <td className="truncate px-4 py-4 align-top text-sm text-slate-600 print:hidden dark:text-slate-300">
           {client.address}
         </td>
 
@@ -105,12 +106,13 @@ function ClientRow({
       </tr>
 
       {isExpanded && (
-        <tr className="border-b border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-950">
+        <tr className="animate-fade-in border-b border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-950">
           <td colSpan={9} className="p-5">
             <ClientDetails
               client={client}
               onAddExtension={onAddExtension}
               onDeleteExtension={onDeleteExtension}
+              onUpdateExtension={onUpdateExtension}
             />
           </td>
         </tr>

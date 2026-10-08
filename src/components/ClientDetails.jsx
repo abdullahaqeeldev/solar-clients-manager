@@ -1,4 +1,5 @@
 import { User, MapPin, CalendarDays, FileText } from "lucide-react";
+import { getMapUrl } from "../utils/clientUtils";
 import ExtensionForm from "./ExtensionForm";
 import ExtensionList from "./ExtensionList";
 
@@ -8,10 +9,31 @@ const boxLabel =
   "mb-2 flex items-center gap-2 text-xs font-semibold text-slate-400";
 const boxValue = "font-semibold text-slate-800 dark:text-slate-100";
 
-function ClientDetails({ client, onAddExtension, onDeleteExtension }) {
+function ClientDetails({
+  client,
+  onAddExtension,
+  onDeleteExtension,
+  onUpdateExtension,
+}) {
   const infoBoxes = [
     { label: "Client", value: client.name, icon: <User size={15} /> },
     { label: "Address", value: client.address, icon: <MapPin size={15} /> },
+    {
+      label: "Location",
+      value: client.location ? (
+        <a
+          href={getMapUrl(client.location)}
+          target="_blank"
+          rel="noreferrer"
+          className="text-blue-600 hover:underline dark:text-blue-400"
+        >
+          Open in Google Maps
+        </a>
+      ) : (
+        "-"
+      ),
+      icon: <MapPin size={15} />,
+    },
     {
       label: "Installation",
       value: client.date,
@@ -38,7 +60,7 @@ function ClientDetails({ client, onAddExtension, onDeleteExtension }) {
               {box.icon}
               {box.label}
             </div>
-            <p className={boxValue}>{box.value}</p>
+            <div className={boxValue}>{box.value}</div>
           </div>
         ))}
       </div>
@@ -74,6 +96,9 @@ function ClientDetails({ client, onAddExtension, onDeleteExtension }) {
         <ExtensionList
           extensions={client.extensions}
           onDelete={(extensionId) => onDeleteExtension(client.id, extensionId)}
+          onUpdate={(extensionId, data) =>
+            onUpdateExtension(client.id, extensionId, data)
+          }
         />
       </div>
     </div>

@@ -1,14 +1,14 @@
 import ClientRow from "./ClientRow";
 
 const headers = [
-  { label: "Client", width: "w-[15%]", align: "text-left" },
-  { label: "Address", width: "w-[15%]", align: "text-left" },
-  { label: "Solar", width: "w-[8%]", align: "text-left" },
-  { label: "Install", width: "w-[11%]", align: "text-left" },
-  { label: "License Start", width: "w-[11%]", align: "text-left" },
-  { label: "License Expiry", width: "w-[11%]", align: "text-left" },
-  { label: "Ext.", width: "w-[6%]", align: "text-left" },
-  { label: "Status", width: "w-[9%]", align: "text-left" },
+  { label: "Client", width: "w-[15%] print:w-[30%]", align: "text-left" },
+  { label: "Address", width: "w-[15%] print:hidden", align: "text-left" },
+  { label: "Solar", width: "w-[8%] print:w-[10%]", align: "text-left" },
+  { label: "Install", width: "w-[11%] print:w-[14%]", align: "text-left" },
+  { label: "License Start", width: "w-[11%] print:w-[14%]", align: "text-left" },
+  { label: "License Expiry", width: "w-[11%] print:w-[14%]", align: "text-left" },
+  { label: "Ext.", width: "w-[6%] print:w-[8%]", align: "text-left" },
+  { label: "Status", width: "w-[9%] print:w-[10%]", align: "text-left" },
   { label: "Actions", width: "w-[14%] print:hidden", align: "text-center" },
 ];
 
@@ -20,6 +20,7 @@ function ClientTable({
   onDelete,
   onAddExtension,
   onDeleteExtension,
+  onUpdateExtension,
   onPrint,
 }) {
   return (
@@ -49,6 +50,7 @@ function ClientTable({
               onDelete={onDelete}
               onAddExtension={onAddExtension}
               onDeleteExtension={onDeleteExtension}
+              onUpdateExtension={onUpdateExtension}
               onPrint={onPrint}
             />
           ))}

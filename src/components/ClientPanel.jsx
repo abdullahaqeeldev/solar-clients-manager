@@ -24,6 +24,7 @@ function ClientPanel({
   onDelete,
   onAddExtension,
   onDeleteExtension,
+  onUpdateExtension,
   onPrint,
   onRestore,
 }) {
@@ -53,11 +54,12 @@ function ClientPanel({
     onDelete: requestDelete,
     onAddExtension,
     onDeleteExtension,
+    onUpdateExtension,
     onPrint,
   };
 
   return (
-    <section className="relative rounded-xl border border-slate-200 bg-surface shadow-sm dark:border-slate-800 dark:bg-slate-900">
+    <section className="animate-fade-up relative rounded-xl border border-slate-200 bg-surface shadow-sm dark:border-slate-800 dark:bg-slate-900">
       {/* HEADER */}
       <div className="flex flex-col gap-4 border-b border-slate-200 p-4 sm:flex-row sm:items-center sm:justify-between md:p-5 dark:border-slate-800">
         <div>
@@ -134,6 +136,7 @@ function ClientPanel({
                 onDelete={requestDelete}
                 onAddExtension={onAddExtension}
                 onDeleteExtension={onDeleteExtension}
+                onUpdateExtension={onUpdateExtension}
                 onPrint={onPrint}
               />
             ))}

@@ -12,10 +12,11 @@ function MobileClientCard({
   onDelete,
   onAddExtension,
   onDeleteExtension,
+  onUpdateExtension,
   onPrint,
 }) {
   return (
-    <div className="overflow-hidden rounded-xl border border-slate-200 bg-surface dark:border-slate-800 dark:bg-slate-900">
+    <div className="animate-fade-up overflow-hidden rounded-xl border border-slate-200 bg-surface dark:border-slate-800 dark:bg-slate-900">
       <div className="p-4">
         <div className="flex items-start justify-between gap-3">
           <div className="flex min-w-0 items-center gap-3">
@@ -120,6 +121,7 @@ function MobileClientCard({
             client={client}
             onAddExtension={onAddExtension}
             onDeleteExtension={onDeleteExtension}
+            onUpdateExtension={onUpdateExtension}
           />
         </div>
       )}

@@ -1,12 +1,11 @@
 import Papa from "papaparse";
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
 import { getExtensionsKW, getClientTotalKW } from "./clientUtils";
 
 // Export mein jo columns aayenge (apne client ke asli fields)
 const COLUMNS = [
   { label: "Name", get: (c) => c.name },
   { label: "Address", get: (c) => c.address },
+  { label: "Location", get: (c) => c.location },
   { label: "Solar (KW)", get: (c) => c.solar },
   { label: "Installation Date", get: (c) => c.date },
   { label: "License Start", get: (c) => c.licenseStart },
@@ -36,7 +35,12 @@ export function buildCSVBlob(clients) {
   return new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
 }
 
-export function buildPDFBlob(clients, title = "Solar Clients Report") {
+// jspdf bhaari library hai, is liye sirf PDF banate waqt load hoti hai (app jaldi khulti hai)
+export async function buildPDFBlob(clients, title = "Solar Clients Report") {
+  const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
+    import("jspdf"),
+    import("jspdf-autotable"),
+  ]);
   const doc = new jsPDF({ orientation: "landscape" });
   doc.text(title, 14, 15);
   autoTable(doc, {
@@ -52,8 +56,8 @@ export function downloadCSV(clients, filename = "clients.csv") {
   triggerDownload(buildCSVBlob(clients), filename);
 }
 
-export function downloadPDF(clients, filename = "clients.pdf") {
-  triggerDownload(buildPDFBlob(clients), filename);
+export async function downloadPDF(clients, filename = "clients.pdf") {
+  triggerDownload(await buildPDFBlob(clients), filename);
 }
 
 // Mobile pe native share menu (WhatsApp, email...). Return false agar support nahi.

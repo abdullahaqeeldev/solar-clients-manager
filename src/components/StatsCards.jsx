@@ -27,10 +27,11 @@ function StatsCards({ totalClients, totalKW, totalExtensions }) {
 
   return (
     <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {cards.map((card) => (
+      {cards.map((card, index) => (
         <div
           key={card.label}
-          className="rounded-xl border border-slate-200 bg-surface p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900"
+          style={{ animationDelay: `${index * 90}ms` }}
+          className="animate-fade-up rounded-xl border border-slate-200 bg-surface p-5 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-md dark:border-slate-800 dark:bg-slate-900"
         >
           <div className="flex items-center justify-between">
             <div className="min-w-0">

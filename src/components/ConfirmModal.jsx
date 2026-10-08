@@ -28,14 +28,14 @@ export default function ConfirmModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 print:hidden"
+      className="animate-fade-in fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 print:hidden"
       onClick={onCancel}
       role="dialog"
       aria-modal="true"
       aria-labelledby="confirm-title"
     >
       <div
-        className="w-full max-w-sm rounded-2xl bg-surface p-6 text-center shadow-xl dark:bg-slate-900"
+        className="animate-pop w-full max-w-sm rounded-2xl bg-surface p-6 text-center shadow-xl dark:bg-slate-900"
         onClick={(e) => e.stopPropagation()}
       >
         <div

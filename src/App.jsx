@@ -23,6 +23,7 @@ function App() {
     deleteClient,
     addExtension,
     deleteExtension,
+    updateExtension,
     restoreClients,
   } = useClients();
 
@@ -118,6 +119,7 @@ function App() {
             onDelete={handleDelete}
             onAddExtension={addExtension}
             onDeleteExtension={deleteExtension}
+            onUpdateExtension={updateExtension}
             onPrint={setPrintClient}
             onRestore={restoreClients}
           />

@@ -7,6 +7,44 @@
     <title>solar-manager</title>
   </head>
   <body>
+    <style>
+      #splash {
+        position: fixed; inset: 0; z-index: 9999;
+        display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
+        background: #f8fafc; color: #0f172a;
+        transition: opacity .5s ease, visibility .5s ease;
+      }
+      #splash.dark { background: #020617; color: #f1f5f9; }
+      #splash.splash-hide { opacity: 0; visibility: hidden; }
+      #splash .sun { width: 80px; height: 80px; color: #f97316; will-change: transform; animation: splash-spin 6s linear infinite; }
+      #splash .bar { width: 140px; height: 4px; border-radius: 4px; background: rgba(100,116,139,.25); overflow: hidden; }
+      #splash .bar::after {
+        content: ""; display: block; width: 40%; height: 100%; border-radius: 4px; background: #f97316;
+        will-change: transform; animation: splash-load 1.1s ease-in-out infinite;
+      }
+      @keyframes splash-spin { to { transform: rotate(360deg); } }
+      @keyframes splash-load { 0% { transform: translateX(-100%); } 100% { transform: translateX(350%); } }
+      @media print { #splash { display: none; } }
+    </style>
+
+    <div id="splash">
+      <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="4"></circle>
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+      </svg>
+      <div class="bar"></div>
+    </div>
+
+    <script>
+      // Dark mode ho to loading screen bhi dark ho (flash na aaye)
+      try {
+        if (localStorage.getItem("solar-theme") === "dark") {
+          document.getElementById("splash").classList.add("dark");
+          document.documentElement.style.background = "#020617";
+        }
+      } catch (e) {}
+    </script>
+
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

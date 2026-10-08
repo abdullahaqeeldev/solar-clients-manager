@@ -4,6 +4,7 @@ export const THEME_KEY = "solar-theme";
 export const emptyClient = {
   name: "",
   address: "",
+  location: "",
   solar: "",
   date: "",
   licenseStart: "",
@@ -96,4 +97,12 @@ export function validateExtension(data) {
   }
   if (!data.date) return "Extension date is required.";
   return "";
+}
+
+// Location text/link se Google Maps ka link banata hai (khali ho to "")
+export function getMapUrl(location) {
+  const value = String(location || "").trim();
+  if (!value) return "";
+  if (/^https?:\/\//i.test(value)) return value;
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(value)}`;
 }
