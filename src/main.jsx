@@ -2,8 +2,12 @@
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
+import { startSpinningFavicon } from './utils/animatedFavicon'
 
 createRoot(document.getElementById('root')).render(<App />)
+
+// Browser tab ke icon mein ghoomta hua sun
+startSpinningFavicon()
 
 // Loading screen (index.html mein #splash) ko fade-out karke hata do.
 // performance.now() page shuru hone se ab tak ka time hai, is liye kam az kam 800ms dikhega.

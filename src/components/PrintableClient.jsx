@@ -1,5 +1,6 @@
 import { QRCodeSVG } from "qrcode.react";
 import { getClientTotalKW, getMapUrl } from "../utils/clientUtils";
+import { hasNetMetering } from "../utils/netMetering";
 
 // Pehla letter capital, baqi sab small
 const cap = (value) => {
@@ -12,14 +13,20 @@ const cap = (value) => {
 function PrintableClient({ client }) {
   const mapUrl = getMapUrl(client.location);
   const installations = client.extensions || [];
+  const netMetering = hasNetMetering(client);
 
   const rows = [
     ["Client name", cap(client.name)],
     ["Client ID", `#${client.id}`],
     ["Address", cap(client.address)],
     ["Installation date", client.date],
-    ["Net meter license start", client.licenseStart || "-"],
-    ["Net meter license expiry", client.licenseExpiry || "-"],
+    ["Net metering", netMetering ? "Yes" : "No"],
+    ...(netMetering
+      ? [
+          ["Net meter license start", client.licenseStart || "-"],
+          ["Net meter license expiry", client.licenseExpiry || "-"],
+        ]
+      : []),
     ["Status", cap(client.status)],
     ["Solar capacity", `${client.solar} KW`],
     ["Total capacity", `${getClientTotalKW(client)} KW`],

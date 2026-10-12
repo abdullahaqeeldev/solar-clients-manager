@@ -1,5 +1,6 @@
 import Papa from "papaparse";
 import { getExtensionsKW, getClientTotalKW } from "./clientUtils";
+import { hasNetMetering } from "./netMetering";
 
 // Export mein jo columns aayenge (apne client ke asli fields)
 const COLUMNS = [
@@ -8,8 +9,9 @@ const COLUMNS = [
   { label: "Location", get: (c) => c.location },
   { label: "Solar (KW)", get: (c) => c.solar },
   { label: "Installation Date", get: (c) => c.date },
-  { label: "License Start", get: (c) => c.licenseStart },
-  { label: "License Expiry", get: (c) => c.licenseExpiry },
+  { label: "Net Metering", get: (c) => (hasNetMetering(c) ? "Yes" : "No") },
+  { label: "License Start", get: (c) => (hasNetMetering(c) ? c.licenseStart : "") },
+  { label: "License Expiry", get: (c) => (hasNetMetering(c) ? c.licenseExpiry : "") },
   { label: "Status", get: (c) => c.status },
   { label: "Extensions", get: (c) => c.extensions?.length || 0 },
   { label: "Extensions (KW)", get: (c) => getExtensionsKW(c) },

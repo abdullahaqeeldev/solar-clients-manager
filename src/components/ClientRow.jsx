@@ -2,6 +2,7 @@ import { Fragment } from "react";
 import { ChevronDown, ChevronUp, Pencil, Trash2, Printer } from "lucide-react";
 import ClientDetails from "./ClientDetails";
 import { getStatusClass } from "../utils/clientUtils";
+import { hasNetMetering } from "../utils/netMetering";
 
 function ClientRow({
   client,
@@ -46,13 +47,23 @@ function ClientRow({
           {client.date}
         </td>
 
-        <td className="px-4 py-4 align-top text-sm text-slate-600 dark:text-slate-300">
-          {client.licenseStart || "-"}
-        </td>
+        {hasNetMetering(client) ? (
+          <>
+            <td className="px-4 py-4 align-top text-sm text-slate-600 dark:text-slate-300">
+              {client.licenseStart || "-"}
+            </td>
 
-        <td className="px-4 py-4 align-top text-sm text-slate-600 dark:text-slate-300">
-          {client.licenseExpiry || "-"}
-        </td>
+            <td className="px-4 py-4 align-top text-sm text-slate-600 dark:text-slate-300">
+              {client.licenseExpiry || "-"}
+            </td>
+          </>
+        ) : (
+          <td colSpan={2} className="px-4 py-4 align-top">
+            <span className="rounded-md bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-500 dark:bg-slate-800 dark:text-slate-400">
+              No net metering
+            </span>
+          </td>
+        )}
 
         <td className="px-4 py-4 align-top">
           <span className="rounded-md bg-purple-50 px-2 py-1 text-xs font-bold text-purple-600 dark:bg-purple-950/40 dark:text-purple-400">

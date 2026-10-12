@@ -79,9 +79,11 @@ export function parseBackup(text) {
   const clean = list
     .filter((c) => c && typeof c === "object" && String(c.name || "").trim())
     .map((c) => ({
+      ...c, // koi bhi aur field (jaise location, netMetering) restore mein zaya na ho
       id: c.id ?? `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       name: String(c.name || ""),
       address: String(c.address || ""),
+      location: String(c.location || ""),
       solar: c.solar ?? "",
       date: String(c.date || ""),
       licenseStart: String(c.licenseStart || ""),

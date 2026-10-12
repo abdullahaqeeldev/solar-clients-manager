@@ -1,5 +1,6 @@
-import { User, MapPin, CalendarDays, FileText } from "lucide-react";
+import { User, MapPin, CalendarDays, FileText, Zap } from "lucide-react";
 import { getMapUrl } from "../utils/clientUtils";
+import { hasNetMetering } from "../utils/netMetering";
 import ExtensionForm from "./ExtensionForm";
 import ExtensionList from "./ExtensionList";
 
@@ -15,6 +16,8 @@ function ClientDetails({
   onDeleteExtension,
   onUpdateExtension,
 }) {
+  const netMetering = hasNetMetering(client);
+
   const infoBoxes = [
     { label: "Client", value: client.name, icon: <User size={15} /> },
     { label: "Address", value: client.address, icon: <MapPin size={15} /> },
@@ -40,15 +43,24 @@ function ClientDetails({
       icon: <CalendarDays size={15} />,
     },
     {
-      label: "License Start",
-      value: client.licenseStart || "-",
-      icon: <CalendarDays size={15} />,
+      label: "Net Metering",
+      value: netMetering ? "Yes" : "No net metering",
+      icon: <Zap size={15} />,
     },
-    {
-      label: "License Expiry",
-      value: client.licenseExpiry || "-",
-      icon: <CalendarDays size={15} />,
-    },
+    ...(netMetering
+      ? [
+          {
+            label: "License Start",
+            value: client.licenseStart || "-",
+            icon: <CalendarDays size={15} />,
+          },
+          {
+            label: "License Expiry",
+            value: client.licenseExpiry || "-",
+            icon: <CalendarDays size={15} />,
+          },
+        ]
+      : []),
   ];
 
   return (

@@ -2,6 +2,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { Trash2, Pencil, Check, X } from "lucide-react";
 import ConfirmModal from "./ConfirmModal";
+import DatePicker from "./DatePicker";
 import { getInputClass, validateExtension } from "../utils/clientUtils";
 
 const iconBtn =
@@ -100,13 +101,12 @@ function ExtensionList({ extensions = [], onDelete, onUpdate }) {
                 step="any"
                 className={editInput}
               />
-              <input
-                type="date"
+              <DatePicker
                 name="date"
                 value={editData.date}
                 onChange={handleEditChange}
-                aria-label="Extension date"
-                className={editInput}
+                ariaLabel="Extension date"
+                hasError={Boolean(editError)}
               />
               <input
                 name="notes"

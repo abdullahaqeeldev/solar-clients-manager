@@ -2,6 +2,8 @@ import { useState } from "react";
 import { X, Save, LocateFixed, ExternalLink } from "lucide-react";
 import toast from "react-hot-toast";
 import FormField from "./FormField";
+import DatePicker from "./DatePicker";
+import { hasNetMetering } from "../utils/netMetering";
 import {
   emptyClient,
   getInputClass,
@@ -18,12 +20,13 @@ function ClientForm({ editingClient, onSave, onCancel }) {
           location: editingClient.location || "",
           solar: editingClient.solar,
           date: editingClient.date,
+          netMetering: hasNetMetering(editingClient) ? "Yes" : "No",
           licenseStart: editingClient.licenseStart || "",
           licenseExpiry: editingClient.licenseExpiry || "",
           status: editingClient.status,
           notes: editingClient.notes,
         }
-      : emptyClient,
+      : { ...emptyClient, netMetering: "Yes" },
   );
 
   const [errors, setErrors] = useState({});
@@ -32,6 +35,15 @@ function ClientForm({ editingClient, onSave, onCancel }) {
     const { name, value } = e.target;
     setFormData((previous) => ({ ...previous, [name]: value }));
     setErrors((previous) => ({ ...previous, [name]: undefined }));
+  };
+
+  const handleNetMeteringChange = (value) => {
+    setFormData((previous) => ({ ...previous, netMetering: value }));
+    setErrors((previous) => ({
+      ...previous,
+      licenseStart: undefined,
+      licenseExpiry: undefined,
+    }));
   };
 
   // Browser se abhi ki location le kar Google Maps ka link bana do
@@ -57,13 +69,25 @@ function ClientForm({ editingClient, onSave, onCancel }) {
     e.preventDefault();
 
     const validationErrors = validateClient(formData);
+    const usesNetMetering = formData.netMetering === "Yes";
+
+    // Net metering nahi hai to license dates ki zaroorat nahi
+    if (!usesNetMetering) {
+      delete validationErrors.licenseStart;
+      delete validationErrors.licenseExpiry;
+    }
 
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
 
-    onSave(formData);
+    // No ho to purani dates bhi saaf kar do
+    onSave(
+      usesNetMetering
+        ? formData
+        : { ...formData, licenseStart: "", licenseExpiry: "" },
+    );
   };
 
   return (
@@ -167,45 +191,66 @@ function ClientForm({ editingClient, onSave, onCancel }) {
         </FormField>
 
         <FormField label="Installation Date" name="date" error={errors.date}>
-          <input
-            id="date"
-            type="date"
-            name="date"
-            value={formData.date}
-            onChange={handleChange}
-            className={getInputClass(errors.date)}
-          />
+          <DatePicker
+                id="date"
+                name="date"
+                value={formData.date}
+                onChange={handleChange}
+                hasError={Boolean(errors.date)}
+              />
         </FormField>
 
-        <FormField
-          label="Net Meter License Start"
-          name="licenseStart"
-          error={errors.licenseStart}
-        >
-          <input
-            id="licenseStart"
-            type="date"
-            name="licenseStart"
-            value={formData.licenseStart}
-            onChange={handleChange}
-            className={getInputClass(errors.licenseStart)}
-          />
+        <FormField label="Net Metering" name="netMetering">
+          <div className="flex gap-2" role="group" aria-label="Net metering">
+            {["Yes", "No"].map((option) => (
+              <button
+                key={option}
+                type="button"
+                aria-pressed={formData.netMetering === option}
+                onClick={() => handleNetMeteringChange(option)}
+                className={`flex-1 rounded-lg border px-4 py-2.5 text-sm font-semibold transition ${
+                  formData.netMetering === option
+                    ? "border-blue-600 bg-blue-600 text-white"
+                    : "border-slate-200 bg-surface text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+                }`}
+              >
+                {option}
+              </button>
+            ))}
+          </div>
         </FormField>
 
-        <FormField
-          label="Net Meter License Expiry"
-          name="licenseExpiry"
-          error={errors.licenseExpiry}
-        >
-          <input
-            id="licenseExpiry"
-            type="date"
-            name="licenseExpiry"
-            value={formData.licenseExpiry}
-            onChange={handleChange}
-            className={getInputClass(errors.licenseExpiry)}
-          />
-        </FormField>
+        {formData.netMetering === "Yes" && (
+          <>
+            <FormField
+              label="Net Meter License Start"
+              name="licenseStart"
+              error={errors.licenseStart}
+            >
+              <DatePicker
+                id="licenseStart"
+                name="licenseStart"
+                value={formData.licenseStart}
+                onChange={handleChange}
+                hasError={Boolean(errors.licenseStart)}
+              />
+            </FormField>
+
+            <FormField
+              label="Net Meter License Expiry"
+              name="licenseExpiry"
+              error={errors.licenseExpiry}
+            >
+              <DatePicker
+                id="licenseExpiry"
+                name="licenseExpiry"
+                value={formData.licenseExpiry}
+                onChange={handleChange}
+                hasError={Boolean(errors.licenseExpiry)}
+              />
+            </FormField>
+          </>
+        )}
 
         <FormField label="Status" name="status">
           <select

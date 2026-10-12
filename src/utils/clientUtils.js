@@ -33,19 +33,28 @@ export function getStatusClass(status) {
   return "bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400";
 }
 
+// Floating point ki ghalati (jaise 41.699999999999996) se bachne ke liye 3 decimal tak round
+export function roundKW(value) {
+  return Math.round((Number(value) + Number.EPSILON) * 1000) / 1000;
+}
+
 export function getExtensionsKW(client) {
-  return (client.extensions || []).reduce(
-    (sum, extension) => sum + Number(extension.kw || 0),
-    0,
+  return roundKW(
+    (client.extensions || []).reduce(
+      (sum, extension) => sum + Number(extension.kw || 0),
+      0,
+    ),
   );
 }
 
 export function getClientTotalKW(client) {
-  return Number(client.solar || 0) + getExtensionsKW(client);
+  return roundKW(Number(client.solar || 0) + getExtensionsKW(client));
 }
 
 export function getTotalKW(clients) {
-  return clients.reduce((total, client) => total + getClientTotalKW(client), 0);
+  return roundKW(
+    clients.reduce((total, client) => total + getClientTotalKW(client), 0),
+  );
 }
 
 export function getTotalExtensions(clients) {

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Plus, X } from "lucide-react";
+import DatePicker from "./DatePicker";
 import {
   emptyExtension,
   getInputClass,
@@ -78,13 +79,12 @@ function ExtensionForm({ onAdd }) {
           className={inputClass}
         />
 
-        <input
-          type="date"
+        <DatePicker
           name="date"
           value={data.date}
           onChange={handleChange}
-          aria-label="Extension date"
-          className={inputClass}
+          ariaLabel="Extension date"
+          hasError={Boolean(error)}
         />
 
         <div className="flex gap-2">

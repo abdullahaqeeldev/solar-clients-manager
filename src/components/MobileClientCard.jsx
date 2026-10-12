@@ -1,6 +1,7 @@
 import { ChevronDown, ChevronUp, Pencil, Trash2, Printer } from "lucide-react";
 import ClientDetails from "./ClientDetails";
 import { getStatusClass } from "../utils/clientUtils";
+import { hasNetMetering } from "../utils/netMetering";
 
 const labelClass = "text-[11px] font-semibold uppercase text-slate-400";
 
@@ -54,19 +55,30 @@ function MobileClientCard({
             </p>
           </div>
 
-          <div>
-            <p className={labelClass}>License Start</p>
-            <p className="mt-1 text-sm text-slate-700 dark:text-slate-300">
-              {client.licenseStart || "-"}
-            </p>
-          </div>
+          {hasNetMetering(client) ? (
+            <>
+              <div>
+                <p className={labelClass}>License Start</p>
+                <p className="mt-1 text-sm text-slate-700 dark:text-slate-300">
+                  {client.licenseStart || "-"}
+                </p>
+              </div>
 
-          <div>
-            <p className={labelClass}>License Expiry</p>
-            <p className="mt-1 text-sm text-slate-700 dark:text-slate-300">
-              {client.licenseExpiry || "-"}
-            </p>
-          </div>
+              <div>
+                <p className={labelClass}>License Expiry</p>
+                <p className="mt-1 text-sm text-slate-700 dark:text-slate-300">
+                  {client.licenseExpiry || "-"}
+                </p>
+              </div>
+            </>
+          ) : (
+            <div className="col-span-2">
+              <p className={labelClass}>Net Metering</p>
+              <p className="mt-1 text-sm font-semibold text-slate-500 dark:text-slate-400">
+                No net metering
+              </p>
+            </div>
+          )}
 
           <div className="col-span-2">
             <p className={labelClass}>Extensions</p>
