@@ -1,6 +1,7 @@
 import { QRCodeSVG } from "qrcode.react";
-import { getClientTotalKW, getMapUrl } from "../utils/clientUtils";
+import { getClientTotalKW, getMapUrl, formatKW } from "../utils/clientUtils";
 import { hasNetMetering } from "../utils/netMetering";
+import { showDate } from "../utils/dateUtils";
 
 // Pehla letter capital, baqi sab small
 const cap = (value) => {
@@ -19,17 +20,17 @@ function PrintableClient({ client }) {
     ["Client name", cap(client.name)],
     ["Client ID", `#${client.id}`],
     ["Address", cap(client.address)],
-    ["Installation date", client.date],
+    ["Installation date", showDate(client.date)],
     ["Net metering", netMetering ? "Yes" : "No"],
     ...(netMetering
       ? [
-          ["Net meter license start", client.licenseStart || "-"],
-          ["Net meter license expiry", client.licenseExpiry || "-"],
+          ["Net meter license start", showDate(client.licenseStart) || "-"],
+          ["Net meter license expiry", showDate(client.licenseExpiry) || "-"],
         ]
       : []),
     ["Status", cap(client.status)],
-    ["Solar capacity", `${client.solar} KW`],
-    ["Total capacity", `${getClientTotalKW(client)} KW`],
+    ["Solar capacity", `${formatKW(client.solar)} KW`],
+    ["Total capacity", `${formatKW(getClientTotalKW(client))} KW`],
   ];
 
   return (
@@ -69,7 +70,7 @@ function PrintableClient({ client }) {
             {installations.map((ext) => (
               <tr key={ext.id} className="border-b border-black">
                 <td className="border border-black px-2 py-1.5">+{ext.kw}</td>
-                <td className="border border-black px-2 py-1.5">{ext.date}</td>
+                <td className="border border-black px-2 py-1.5">{showDate(ext.date)}</td>
                 <td className="border border-black px-2 py-1.5">{cap(ext.notes)}</td>
               </tr>
             ))}

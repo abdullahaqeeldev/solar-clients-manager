@@ -1,6 +1,7 @@
 import { User, MapPin, CalendarDays, FileText, Zap } from "lucide-react";
 import { getMapUrl } from "../utils/clientUtils";
 import { hasNetMetering } from "../utils/netMetering";
+import { showDate } from "../utils/dateUtils";
 import ExtensionForm from "./ExtensionForm";
 import ExtensionList from "./ExtensionList";
 
@@ -39,7 +40,7 @@ function ClientDetails({
     },
     {
       label: "Installation",
-      value: client.date,
+      value: showDate(client.date) || "-",
       icon: <CalendarDays size={15} />,
     },
     {
@@ -50,13 +51,19 @@ function ClientDetails({
     ...(netMetering
       ? [
           {
-            label: "License Start",
-            value: client.licenseStart || "-",
-            icon: <CalendarDays size={15} />,
-          },
-          {
-            label: "License Expiry",
-            value: client.licenseExpiry || "-",
+            label: "License",
+            value: (
+              <div className="space-y-1 text-sm">
+                <p>
+                  <span className="mr-2 font-normal text-slate-400">Start</span>
+                  {showDate(client.licenseStart) || "-"}
+                </p>
+                <p>
+                  <span className="mr-2 font-normal text-slate-400">Expiry</span>
+                  {showDate(client.licenseExpiry) || "-"}
+                </p>
+              </div>
+            ),
             icon: <CalendarDays size={15} />,
           },
         ]

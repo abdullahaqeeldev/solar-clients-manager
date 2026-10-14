@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Toaster } from "react-hot-toast";
+import CursorFollower from "./components/CursorFollower";
 import Topbar from "./components/Topbar";
 import StatsCards from "./components/StatsCards";
 import ClientPanel from "./components/ClientPanel";
@@ -77,6 +78,7 @@ function App() {
   return (
     <div className="min-h-screen overflow-x-hidden bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100">
       <Toaster position="top-center" />
+      <CursorFollower />
       <main className={`min-h-screen ${printClient ? "print:hidden" : ""}`}>
         <div className="print:hidden">
           <Topbar

@@ -7,12 +7,21 @@ import {
 } from "../utils/clientUtils";
 import {
   BACKUP_COPY_KEY,
+  BEFORE_RESTORE_KEY,
   safeRead,
   safeSave,
   parseClientList,
   requestPersistentStorage,
   mergeClients,
 } from "../utils/backup";
+
+// Number id (purane data jaisi), lekin ek hi millisecond mein do baar bane to bhi alag rahe
+let lastId = 0;
+function nextId() {
+  const now = Date.now();
+  lastId = now > lastId ? now : lastId + 1;
+  return lastId;
+}
 
 // Start par data load: pehle main copy, na mile/kharab ho to rolling backup copy
 function loadClients() {
@@ -61,13 +70,15 @@ export default function useClients() {
 
   // Backup file se restore: "merge" ya "replace"
   const restoreClients = (incoming, mode = "merge") => {
+    // Restore se pehle mojooda data ki copy rakh lo, taake kuch bhi ghalat ho to wapas mil sake
+    if (clients.length > 0) safeSave(BEFORE_RESTORE_KEY, JSON.stringify(clients));
     setClients((current) =>
       mode === "replace" ? incoming : mergeClients(current, incoming),
     );
   };
 
   const addClient = (data) => {
-    const newClient = { id: Date.now(), ...data, extensions: [] };
+    const newClient = { id: nextId(), ...data, extensions: [] };
     setClients((previous) => [newClient, ...previous]);
   };
 
@@ -84,7 +95,7 @@ export default function useClients() {
   };
 
   const addExtension = (clientId, extensionData) => {
-    const newExtension = { id: Date.now(), ...extensionData };
+    const newExtension = { id: nextId(), ...extensionData };
 
     setClients((previous) =>
       previous.map((client) =>

@@ -1,24 +1,30 @@
 import { User, Zap, PlusCircle } from "lucide-react";
+import { formatKW } from "../utils/clientUtils";
+import useCountUp from "../hooks/useCountUp";
 
 function StatsCards({ totalClients, totalKW, totalExtensions }) {
+  const animatedClients = useCountUp(totalClients);
+  const animatedKW = useCountUp(totalKW);
+  const animatedExtensions = useCountUp(totalExtensions);
+
   const cards = [
     {
       label: "Total Clients",
-      value: totalClients,
+      value: Math.round(animatedClients),
       icon: <User size={21} />,
       iconClass:
         "bg-blue-50 text-blue-600 dark:bg-blue-950/50 dark:text-blue-400",
     },
     {
       label: "Total Solar Capacity",
-      value: `${totalKW} KW`,
+      value: `${formatKW(animatedKW)} KW`,
       icon: <Zap size={21} />,
       iconClass:
         "bg-amber-50 text-amber-600 dark:bg-amber-950/50 dark:text-amber-400",
     },
     {
       label: "Total Extensions",
-      value: totalExtensions,
+      value: Math.round(animatedExtensions),
       icon: <PlusCircle size={21} />,
       iconClass:
         "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-400",
@@ -38,7 +44,7 @@ function StatsCards({ totalClients, totalKW, totalExtensions }) {
               <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
                 {card.label}
               </p>
-              <h3 className="mt-2 break-all text-2xl font-bold text-slate-900 dark:text-white">
+              <h3 className="mt-2 break-all text-2xl font-bold tabular-nums text-slate-900 dark:text-white">
                 {card.value}
               </h3>
             </div>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { X, Save, LocateFixed, ExternalLink } from "lucide-react";
 import toast from "react-hot-toast";
 import FormField from "./FormField";
@@ -30,6 +30,12 @@ function ClientForm({ editingClient, onSave, onCancel }) {
   );
 
   const [errors, setErrors] = useState({});
+  const rootRef = useRef(null);
+
+  // Form khulte hi screen us tak scroll ho jaye
+  useEffect(() => {
+    rootRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -68,14 +74,12 @@ function ClientForm({ editingClient, onSave, onCancel }) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const validationErrors = validateClient(formData);
     const usesNetMetering = formData.netMetering === "Yes";
 
     // Net metering nahi hai to license dates ki zaroorat nahi
-    if (!usesNetMetering) {
-      delete validationErrors.licenseStart;
-      delete validationErrors.licenseExpiry;
-    }
+    const validationErrors = validateClient(formData, {
+      requireLicense: usesNetMetering,
+    });
 
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
@@ -91,7 +95,7 @@ function ClientForm({ editingClient, onSave, onCancel }) {
   };
 
   return (
-    <div className="animate-slide-down border-b border-slate-200 bg-slate-50 p-4 md:p-6 dark:border-slate-800 dark:bg-slate-950">
+    <div ref={rootRef} className="animate-slide-down border-b border-slate-200 bg-slate-50 p-4 md:p-6 dark:border-slate-800 dark:bg-slate-950">
       <div className="mb-5 flex items-center justify-between">
         <div>
           <h3 className="font-bold text-slate-900 dark:text-white">

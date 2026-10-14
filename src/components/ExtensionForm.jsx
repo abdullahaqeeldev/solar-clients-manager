@@ -3,6 +3,7 @@ import { Plus, X } from "lucide-react";
 import DatePicker from "./DatePicker";
 import {
   emptyExtension,
+  getExtensionErrorField,
   getInputClass,
   validateExtension,
 } from "../utils/clientUtils";
@@ -37,7 +38,9 @@ function ExtensionForm({ onAdd }) {
     setError("");
   };
 
-  const inputClass = getInputClass(Boolean(error));
+  const errorField = getExtensionErrorField(error);
+  const nameClass = getInputClass(errorField === "name");
+  const kwClass = getInputClass(errorField === "kw");
 
   // Band hone par sirf ek button, click par input section khulta hai
   if (!open) {
@@ -64,7 +67,7 @@ function ExtensionForm({ onAdd }) {
           onChange={handleChange}
           placeholder="Extension name"
           aria-label="Extension name"
-          className={inputClass}
+          className={nameClass}
         />
 
         <input
@@ -76,7 +79,7 @@ function ExtensionForm({ onAdd }) {
           aria-label="Extension KW"
           min="0"
           step="any"
-          className={inputClass}
+          className={kwClass}
         />
 
         <DatePicker
@@ -84,7 +87,7 @@ function ExtensionForm({ onAdd }) {
           value={data.date}
           onChange={handleChange}
           ariaLabel="Extension date"
-          hasError={Boolean(error)}
+          hasError={errorField === "date"}
         />
 
         <div className="flex gap-2">

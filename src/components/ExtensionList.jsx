@@ -3,7 +3,12 @@ import toast from "react-hot-toast";
 import { Trash2, Pencil, Check, X } from "lucide-react";
 import ConfirmModal from "./ConfirmModal";
 import DatePicker from "./DatePicker";
-import { getInputClass, validateExtension } from "../utils/clientUtils";
+import {
+  getExtensionErrorField,
+  getInputClass,
+  validateExtension,
+} from "../utils/clientUtils";
+import { showDate } from "../utils/dateUtils";
 
 const iconBtn =
   "rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 dark:hover:bg-slate-700";
@@ -71,7 +76,9 @@ function ExtensionList({ extensions = [], onDelete, onUpdate }) {
     );
   }
 
-  const editInput = getInputClass(Boolean(editError));
+  const editErrorField = getExtensionErrorField(editError);
+  const editNameClass = getInputClass(editErrorField === "name");
+  const editKwClass = getInputClass(editErrorField === "kw");
 
   return (
     <div className="space-y-2">
@@ -88,7 +95,7 @@ function ExtensionList({ extensions = [], onDelete, onUpdate }) {
                 onChange={handleEditChange}
                 placeholder="Extension name"
                 aria-label="Extension name"
-                className={editInput}
+                className={editNameClass}
               />
               <input
                 type="number"
@@ -99,14 +106,14 @@ function ExtensionList({ extensions = [], onDelete, onUpdate }) {
                 aria-label="Extension KW"
                 min="0"
                 step="any"
-                className={editInput}
+                className={editKwClass}
               />
               <DatePicker
                 name="date"
                 value={editData.date}
                 onChange={handleEditChange}
                 ariaLabel="Extension date"
-                hasError={Boolean(editError)}
+                hasError={editErrorField === "date"}
               />
               <input
                 name="notes"
@@ -159,7 +166,7 @@ function ExtensionList({ extensions = [], onDelete, onUpdate }) {
               </div>
 
               <p className="mt-1 text-xs text-slate-400">
-                {extension.date}
+                {showDate(extension.date)}
                 {extension.notes ? ` • ${extension.notes}` : ""}
               </p>
             </div>

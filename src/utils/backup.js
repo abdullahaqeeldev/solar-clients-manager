@@ -2,6 +2,7 @@
 
 export const BACKUP_COPY_KEY = "solar-clients-backup"; // pichla achha save (rolling copy)
 export const LAST_BACKUP_KEY = "solar-last-backup"; // aakhri file backup ki date
+export const BEFORE_RESTORE_KEY = "solar-clients-before-restore"; // restore se pehle mojooda data ki copy
 
 // localStorage mein likhna, error aaye to crash nahi, {ok, error} wapas
 export function safeSave(key, value) {
@@ -77,7 +78,17 @@ export function parseBackup(text) {
   }
 
   const clean = list
-    .filter((c) => c && typeof c === "object" && String(c.name || "").trim())
+    // Koi bhi client-jaisa record rakho (sirf naam na hone par bhi), taake restore mein kuch zaya na ho
+    .filter(
+      (c) =>
+        c &&
+        typeof c === "object" &&
+        !Array.isArray(c) &&
+        (String(c.name || "").trim() ||
+          String(c.address || "").trim() ||
+          String(c.solar ?? "").trim() ||
+          c.id != null),
+    )
     .map((c) => ({
       ...c, // koi bhi aur field (jaise location, netMetering) restore mein zaya na ho
       id: c.id ?? `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
@@ -97,9 +108,27 @@ export function parseBackup(text) {
   return clean;
 }
 
-// Restore ka tareeqa: "merge" = mojooda + backup (same id par backup jeetay), "replace" = sab badal do
+// Extensions ko mila do (same id par backup wali), mojooda extensions kabhi delete nahi hoti
+function mergeExtensions(current, incoming) {
+  const keyOf = (e) => String(e?.id ?? JSON.stringify(e));
+  const map = new Map((Array.isArray(current) ? current : []).map((e) => [keyOf(e), e]));
+  (Array.isArray(incoming) ? incoming : []).forEach((e) => map.set(keyOf(e), e));
+  return Array.from(map.values());
+}
+
+// Restore ka tareeqa (merge): mojooda clients kabhi delete nahi hote.
+// Same id par client ki details backup wali ho jati hain, lekin extensions dono ki mil jati hain.
 export function mergeClients(current, incoming) {
   const map = new Map(current.map((c) => [String(c.id), c]));
-  incoming.forEach((c) => map.set(String(c.id), c));
+  incoming.forEach((c) => {
+    const key = String(c.id);
+    const existing = map.get(key);
+    map.set(
+      key,
+      existing
+        ? { ...c, extensions: mergeExtensions(existing.extensions, c.extensions) }
+        : c,
+    );
+  });
   return Array.from(map.values());
 }

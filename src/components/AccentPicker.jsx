@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Palette, RotateCcw } from "lucide-react";
+import { DEFAULT_ACCENT } from "../hooks/useAccent";
 
 const ACCENT_PRESETS = [
   "#2563eb", // blue
@@ -137,7 +138,7 @@ function AccentPicker({ colors, darkMode }) {
               value={accent}
               onChange={setAccent}
               onReset={resetAccent}
-              isDefault={accent.toLowerCase() === "#2563eb"}
+              isDefault={accent.toLowerCase() === DEFAULT_ACCENT}
             />
 
             <div className="my-4 border-t border-slate-200 dark:border-slate-700" />

@@ -38,6 +38,11 @@ export function displayDate(iso) {
   });
 }
 
+// Screen/print par dikhane ke liye: sahi ISO date ho to "12 Oct 2026", warna jaisi thi waisi
+export function showDate(iso) {
+  return displayDate(iso) || iso || "";
+}
+
 // "2026-10-12" -> "12/10/2026" (typing box ke liye)
 export function isoToText(iso) {
   const p = parseISO(iso);

@@ -1,11 +1,14 @@
 import { ChevronDown, ChevronUp, Pencil, Trash2, Printer } from "lucide-react";
 import ClientDetails from "./ClientDetails";
-import { getStatusClass } from "../utils/clientUtils";
+import ClientForm from "./ClientForm";
+import { getStatusClass, formatKW } from "../utils/clientUtils";
 import { hasNetMetering } from "../utils/netMetering";
+import { showDate } from "../utils/dateUtils";
 
 const labelClass = "text-[11px] font-semibold uppercase text-slate-400";
 
 function MobileClientCard({
+  index = 0,
   client,
   isExpanded,
   onToggle,
@@ -15,14 +18,22 @@ function MobileClientCard({
   onDeleteExtension,
   onUpdateExtension,
   onPrint,
+  editingClient,
+  onSave,
+  onCancel,
 }) {
+  const isEditing = editingClient?.id === client.id;
+
   return (
-    <div className="animate-fade-up overflow-hidden rounded-xl border border-slate-200 bg-surface dark:border-slate-800 dark:bg-slate-900">
-      <div className="p-4">
+    <div
+      style={{ animationDelay: `${Math.min(index, 10) * 45}ms` }}
+      className="animate-fade-up overflow-hidden rounded-xl border border-slate-200 bg-surface dark:border-slate-800 dark:bg-slate-900"
+    >
+      <div className="cursor-pointer p-4" onClick={onToggle}>
         <div className="flex items-start justify-between gap-3">
           <div className="flex min-w-0 items-center gap-3">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-50 text-sm font-bold text-blue-600 dark:bg-blue-950/50 dark:text-blue-400">
-              {client.name.charAt(0).toUpperCase()}
+              {(client.name || "?").charAt(0).toUpperCase()}
             </div>
 
             <div className="min-w-0">
@@ -44,33 +55,33 @@ function MobileClientCard({
           <div>
             <p className={labelClass}>Solar</p>
             <p className="mt-1 text-sm font-bold text-slate-800 dark:text-slate-100">
-              {client.solar} KW
+              {formatKW(client.solar)} KW
             </p>
           </div>
 
           <div>
             <p className={labelClass}>Date</p>
             <p className="mt-1 text-sm text-slate-700 dark:text-slate-300">
-              {client.date}
+              {showDate(client.date)}
             </p>
           </div>
 
           {hasNetMetering(client) ? (
-            <>
+            <div className="col-span-2 grid grid-cols-2 gap-3 rounded-lg border border-slate-200 p-3 dark:border-slate-700">
               <div>
                 <p className={labelClass}>License Start</p>
                 <p className="mt-1 text-sm text-slate-700 dark:text-slate-300">
-                  {client.licenseStart || "-"}
+                  {showDate(client.licenseStart) || "-"}
                 </p>
               </div>
 
               <div>
                 <p className={labelClass}>License Expiry</p>
                 <p className="mt-1 text-sm text-slate-700 dark:text-slate-300">
-                  {client.licenseExpiry || "-"}
+                  {showDate(client.licenseExpiry) || "-"}
                 </p>
               </div>
-            </>
+            </div>
           ) : (
             <div className="col-span-2">
               <p className={labelClass}>Net Metering</p>
@@ -95,7 +106,10 @@ function MobileClientCard({
           </p>
         </div>
 
-        <div className="mt-4 flex justify-end gap-1 border-t border-slate-100 pt-3 dark:border-slate-800">
+        <div
+          className="mt-4 flex justify-end gap-1 border-t border-slate-100 pt-3 dark:border-slate-800"
+          onClick={(e) => e.stopPropagation()}
+        >
           <button
             onClick={onToggle}
             className="rounded-lg p-2 text-slate-400 transition hover:bg-slate-100 hover:text-blue-600 dark:hover:bg-slate-800 dark:hover:text-blue-400"
@@ -127,15 +141,23 @@ function MobileClientCard({
         </div>
       </div>
 
-      {isExpanded && (
-        <div className="border-t border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950">
-          <ClientDetails
-            client={client}
-            onAddExtension={onAddExtension}
-            onDeleteExtension={onDeleteExtension}
-            onUpdateExtension={onUpdateExtension}
-          />
-        </div>
+      {isEditing ? (
+        <ClientForm
+          editingClient={client}
+          onSave={onSave}
+          onCancel={onCancel}
+        />
+      ) : (
+        isExpanded && (
+          <div className="border-t border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-950">
+            <ClientDetails
+              client={client}
+              onAddExtension={onAddExtension}
+              onDeleteExtension={onDeleteExtension}
+              onUpdateExtension={onUpdateExtension}
+            />
+          </div>
+        )
       )}
     </div>
   );

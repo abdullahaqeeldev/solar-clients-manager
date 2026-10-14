@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { Search, Plus } from "lucide-react";
 import ConfirmModal from "./ConfirmModal";
@@ -46,6 +46,24 @@ function ClientPanel({
     }
     setDeleteTarget(null);
   };
+
+  // Table (desktop) aur cards (mobile) dono DOM mein hote hain, form sirf ek jagah dikhana hai
+  const [isDesktop, setIsDesktop] = useState(
+    () => window.matchMedia("(min-width: 768px)").matches,
+  );
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const onChange = (e) => setIsDesktop(e.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
+  // Edit form usi client ke neeche khulta hai. Agar search se wo client list mein nahi,
+  // to form upar dikhao taake gayab na ho.
+  const editingVisible =
+    Boolean(editingClient) &&
+    filteredClients.some((c) => c.id === editingClient.id);
 
   const rowProps = {
     expandedId,
@@ -107,7 +125,7 @@ function ClientPanel({
       </div>
 
       {/* FORM (key resets the form when switching between add / edit) */}
-      {showForm && (
+      {showForm && !editingVisible && (
         <ClientForm
           key={editingClient?.id ?? "new"}
           editingClient={editingClient}
@@ -123,12 +141,19 @@ function ClientPanel({
         </div>
       ) : (
         <>
-          <ClientTable clients={filteredClients} {...rowProps} />
+          <ClientTable
+            clients={filteredClients}
+            {...rowProps}
+            editingClient={isDesktop && showForm ? editingClient : null}
+            onSave={onSave}
+            onCancel={onCancel}
+          />
 
           <div className="space-y-3 p-4 md:hidden print:hidden">
-            {filteredClients.map((client) => (
+            {filteredClients.map((client, index) => (
               <MobileClientCard
                 key={client.id}
+                index={index}
                 client={client}
                 isExpanded={expandedId === client.id}
                 onToggle={() => onToggle(client.id)}
@@ -138,6 +163,9 @@ function ClientPanel({
                 onDeleteExtension={onDeleteExtension}
                 onUpdateExtension={onUpdateExtension}
                 onPrint={onPrint}
+                editingClient={!isDesktop && showForm ? editingClient : null}
+                onSave={onSave}
+                onCancel={onCancel}
               />
             ))}
           </div>

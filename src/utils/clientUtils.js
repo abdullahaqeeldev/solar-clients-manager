@@ -38,6 +38,11 @@ export function roundKW(value) {
   return Math.round((Number(value) + Number.EPSILON) * 1000) / 1000;
 }
 
+// Sirf screen par dikhane ke liye: decimal hata kar poora number (data save hota hai jaisa tha)
+export function formatKW(value) {
+  return String(Math.round(Number(value) || 0));
+}
+
 export function getExtensionsKW(client) {
   return roundKW(
     (client.extensions || []).reduce(
@@ -71,12 +76,13 @@ export function getInputClass(hasError) {
     .replace("dark:border-slate-700", "dark:border-red-500");
 }
 
-export function validateClient(data) {
+// requireLicense = false ho (net metering nahi) to license dates check nahi hoti
+export function validateClient(data, { requireLicense = true } = {}) {
   const errors = {};
 
-  if (!data.name.trim()) errors.name = "Name is required.";
+  if (!String(data.name ?? "").trim()) errors.name = "Name is required.";
 
-  if (!data.address.trim()) errors.address = "Address is required.";
+  if (!String(data.address ?? "").trim()) errors.address = "Address is required.";
 
   if (!String(data.solar).trim()) {
     errors.solar = "Capacity is required.";
@@ -86,25 +92,36 @@ export function validateClient(data) {
 
   if (!data.date) errors.date = "Installation date is required.";
 
-  if (!data.licenseStart) {
-    errors.licenseStart = "License start date is required.";
-  }
+  if (requireLicense) {
+    if (!data.licenseStart) {
+      errors.licenseStart = "License start date is required.";
+    }
 
-  if (!data.licenseExpiry) {
-    errors.licenseExpiry = "License expiry date is required.";
-  } else if (data.licenseStart && data.licenseExpiry <= data.licenseStart) {
-    errors.licenseExpiry = "Expiry must be after the start date.";
+    if (!data.licenseExpiry) {
+      errors.licenseExpiry = "License expiry date is required.";
+    } else if (data.licenseStart && data.licenseExpiry <= data.licenseStart) {
+      errors.licenseExpiry = "Expiry must be after the start date.";
+    }
   }
 
   return errors;
 }
 
 export function validateExtension(data) {
-  if (!data.name.trim()) return "Extension name is required.";
+  if (!String(data.name ?? "").trim()) return "Extension name is required.";
   if (!String(data.kw).trim() || Number(data.kw) <= 0) {
     return "KW must be greater than 0.";
   }
   if (!data.date) return "Extension date is required.";
+  return "";
+}
+
+// validateExtension ka message dekh kar batata hai kaun si field ghalat hai ("name" / "kw" / "date")
+export function getExtensionErrorField(message) {
+  if (!message) return "";
+  if (message.startsWith("Extension name")) return "name";
+  if (message.startsWith("KW")) return "kw";
+  if (message.startsWith("Extension date")) return "date";
   return "";
 }
 

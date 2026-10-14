@@ -24,7 +24,7 @@ function daysSince(iso) {
 }
 
 function formatDate(iso) {
-  return new Date(iso).toLocaleDateString(undefined, {
+  return new Date(iso).toLocaleDateString("en-GB", {
     day: "2-digit",
     month: "short",
     year: "numeric",
@@ -127,7 +127,7 @@ export default function BackupButtons({ allClients, onRestore }) {
         title="Restore from backup?"
         message={
           pendingRestore
-            ? `Restore ${pendingRestore.length} clients from this backup?\n\nThey will be merged with your current data. Nothing will be deleted; clients with the same ID are updated from the backup.`
+            ? `Restore ${pendingRestore.length} clients from this backup?\n\nThey will be merged with your current data. Nothing will be deleted: clients with the same ID are updated from the backup, and extensions you added since then are kept. A copy of your current data is saved automatically before restoring.`
             : ""
         }
         confirmText="Restore"

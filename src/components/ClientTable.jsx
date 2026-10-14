@@ -1,14 +1,13 @@
 import ClientRow from "./ClientRow";
 
 const headers = [
-  { label: "Client", width: "w-[15%] print:w-[30%]", align: "text-left" },
-  { label: "Address", width: "w-[15%] print:hidden", align: "text-left" },
-  { label: "Solar", width: "w-[8%] print:w-[10%]", align: "text-left" },
-  { label: "Install", width: "w-[11%] print:w-[14%]", align: "text-left" },
-  { label: "License Start", width: "w-[11%] print:w-[14%]", align: "text-left" },
-  { label: "License Expiry", width: "w-[11%] print:w-[14%]", align: "text-left" },
+  { label: "Client", width: "w-[16%] print:w-[28%]", align: "text-left" },
+  { label: "Address", width: "w-[13%] print:hidden", align: "text-left" },
+  { label: "Solar", width: "w-[10%] print:w-[10%]", align: "text-left" },
+  { label: "Install", width: "w-[11%] print:w-[16%]", align: "text-left" },
+  { label: "License", width: "w-[20%] print:w-[28%]", align: "text-left" },
   { label: "Ext.", width: "w-[6%] print:w-[8%]", align: "text-left" },
-  { label: "Status", width: "w-[9%] print:w-[10%]", align: "text-left" },
+  { label: "Status", width: "w-[10%] print:w-[10%]", align: "text-left" },
   { label: "Actions", width: "w-[14%] print:hidden", align: "text-center" },
 ];
 
@@ -22,6 +21,9 @@ function ClientTable({
   onDeleteExtension,
   onUpdateExtension,
   onPrint,
+  editingClient,
+  onSave,
+  onCancel,
 }) {
   return (
     <div className="hidden md:block print:block">
@@ -40,9 +42,10 @@ function ClientTable({
         </thead>
 
         <tbody>
-          {clients.map((client) => (
+          {clients.map((client, index) => (
             <ClientRow
               key={client.id}
+              index={index}
               client={client}
               isExpanded={expandedId === client.id}
               onToggle={() => onToggle(client.id)}
@@ -52,6 +55,9 @@ function ClientTable({
               onDeleteExtension={onDeleteExtension}
               onUpdateExtension={onUpdateExtension}
               onPrint={onPrint}
+              editingClient={editingClient}
+              onSave={onSave}
+              onCancel={onCancel}
             />
           ))}
         </tbody>

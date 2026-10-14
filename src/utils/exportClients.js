@@ -25,7 +25,8 @@ function triggerDownload(blob, filename) {
   a.href = url;
   a.download = filename;
   a.click();
-  URL.revokeObjectURL(url);
+  // Foran revoke karne se kuch browsers mein download shuru hone se pehle link khatam ho jata hai
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 export function buildCSVBlob(clients) {

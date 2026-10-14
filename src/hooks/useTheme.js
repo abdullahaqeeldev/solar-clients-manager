@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import { THEME_KEY } from "../utils/clientUtils";
+import { safeRead, safeSave } from "../utils/backup";
 
 export default function useTheme() {
   const [darkMode, setDarkMode] = useState(
-    () => localStorage.getItem(THEME_KEY) === "dark",
+    () => safeRead(THEME_KEY) === "dark",
   );
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
-    localStorage.setItem(THEME_KEY, darkMode ? "dark" : "light");
+    safeSave(THEME_KEY, darkMode ? "dark" : "light");
   }, [darkMode]);
 
   const toggleTheme = () => setDarkMode((previous) => !previous);
